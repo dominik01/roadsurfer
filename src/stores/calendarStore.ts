@@ -4,7 +4,7 @@ import { format, startOfWeek, addDays, subDays } from 'date-fns'
 
 export const useCalendarStore = defineStore('calendar', () => {
   const currentDate = ref(new Date())
-  const selectedStation = ref<string>('2')
+  const selectedStation = ref<string | null>(null)
 
   const weekDates = computed(() => {
     const monday = startOfWeek(currentDate.value, { weekStartsOn: 1 })
@@ -46,8 +46,8 @@ export const useCalendarStore = defineStore('calendar', () => {
     currentDate.value = addDays(currentDate.value, 7)
   }
 
-  function setSelectedStation(station: string) {
-    selectedStation.value = station
+  function setSelectedStation(stationId: string | null) {
+    selectedStation.value = stationId
   }
 
   return {

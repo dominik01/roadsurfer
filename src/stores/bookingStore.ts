@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Booking, Station } from '../types'
 import { mockStations } from '@/mocks/bookingService'
-import { getStations } from '@/api/common'
 
 export const useBookingStore = defineStore('booking', () => {
   const stations = ref<Station[]>([])
-  const bookings = ref<Booking[]>([])
   const currentBooking = ref<Booking | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -14,13 +12,12 @@ export const useBookingStore = defineStore('booking', () => {
   const fetchStations = async () => {
     isLoading.value = true
     error.value = null
+
     try {
-      //const data = await getStations()
-      // stations.value = data
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
-      stations.value = mockStations
+      stations.value = [...mockStations]
     } catch (err) {
-      stations.value = []
       error.value = 'Failed to fetch stations'
       console.error(error.value, err)
     } finally {
@@ -28,18 +25,40 @@ export const useBookingStore = defineStore('booking', () => {
     }
   }
 
+  // Get all bookings from all stations
+  const allBookings = computed(() => {
+    return stations.value.flatMap((station) =>
+      station.bookings.map((booking) => ({
+        ...booking,
+        stationName: station.name,
+        stationId: station.id,
+      })),
+    )
+  })
+
   const fetchBookingById = async (id: string) => {
     isLoading.value = true
     error.value = null
     currentBooking.value = null
 
     try {
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500))
-      const booking = mockBookings.find((b) => b.id === id)
 
-      if (booking) {
-        currentBooking.value = { ...booking }
-      } else {
+      // Find booking in any station
+      for (const station of stations.value) {
+        const booking = station.bookings.find((b) => b.id === id)
+        if (booking) {
+          currentBooking.value = {
+            ...booking,
+            stationName: station.name, // Add station name for convenience
+            stationId: station.id,
+          }
+          break
+        }
+      }
+
+      if (!currentBooking.value) {
         error.value = `Booking with id ${id} not found`
       }
     } catch (err) {
@@ -50,12 +69,21 @@ export const useBookingStore = defineStore('booking', () => {
     }
   }
 
+  // Get list of all station names for filter
+  const stationNames = computed(() => {
+    return stations.value.map((station) => ({
+      id: station.id,
+      name: station.name,
+    }))
+  })
+
   return {
-    bookings,
+    stations,
+    allBookings,
     currentBooking,
     isLoading,
     error,
-    stations,
+    stationNames,
     fetchStations,
     fetchBookingById,
   }

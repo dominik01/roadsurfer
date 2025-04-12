@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 import { format, parseISO } from 'date-fns'
-import { Booking } from '../types'
+import type { Booking } from '../types'
 
 const props = defineProps<{
   booking: Booking

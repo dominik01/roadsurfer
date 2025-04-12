@@ -14,7 +14,7 @@
       </button>
     </div>
 
-    <div v-if="bookingStore.stations.length > 0" class="mb-4">
+    <div v-if="bookingStore.stationNames.length > 0" class="mb-4">
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-sm font-medium">Filter by station:</span>
         <div class="join">
@@ -26,11 +26,11 @@
             All
           </button>
           <button
-            v-for="station in bookingStore.stations"
+            v-for="station in bookingStore.stationNames"
             :key="station.id"
             class="join-item btn btn-sm"
             :class="calendarStore.selectedStation === station.id ? 'btn-primary' : 'btn-outline'"
-            @click="setSelectedStation(station.id)"
+            @click="calendarStore.setSelectedStation(station.id)"
           >
             {{ station.name }}
           </button>
@@ -56,16 +56,11 @@ const emit = defineEmits<{
   (e: 'booking-click', bookingId: string): void
 }>()
 
-//const router = useRouter()
 const bookingStore = useBookingStore()
 const calendarStore = useCalendarStore()
 
 const clearStationFilter = () => {
-  calendarStore.selectedStation = null
-}
-
-const setSelectedStation = (station: string) => {
-  calendarStore.selectedStation = station
+  calendarStore.setSelectedStation(null)
 }
 
 const onBookingClick = (bookingId: string) => {

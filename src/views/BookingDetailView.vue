@@ -110,6 +110,11 @@ const goBack = () => {
 }
 
 onMounted(async () => {
+  // Ensure stations are loaded (if not already)
+  if (bookingStore.stations.length === 0) {
+    await bookingStore.fetchStations()
+  }
+
   const id = route.params.id as string
   await bookingStore.fetchBookingById(id)
 })
