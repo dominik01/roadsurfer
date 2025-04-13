@@ -50,14 +50,19 @@ const isToday = computed(() => {
   return isSameDay(today, props.date)
 })
 
-const bookingsForDay = computed(() => {
-  return bookingStore.allBookings
-    .filter((booking) => {
-      // Filter by selected station if one is selected
-      if (calendarStore.selectedStation && booking.stationId !== calendarStore.selectedStation) {
-        return false
-      }
+const activeStation = computed(() => {
+  if (!calendarStore.selectedStation) {
+    return null
+  }
+  return bookingStore.stations.find((station) => station.id === calendarStore.selectedStation)
+})
 
+const bookingsForDay = computed(() => {
+  if (!activeStation.value?.bookings.length) {
+    return []
+  }
+  return activeStation.value?.bookings
+    .filter((booking) => {
       const startDate = parseISO(booking.startDate)
       const endDate = parseISO(booking.endDate)
       const isStart = isSameDay(startDate, props.date)

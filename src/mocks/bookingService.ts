@@ -2,7 +2,7 @@ import type { Station } from '@/types'
 
 export const mockStations: Station[] = [
   {
-    id: '2',
+    id: '1',
     name: 'Berlin',
     bookings: [
       {
@@ -43,7 +43,7 @@ export const mockStations: Station[] = [
     ],
   },
   {
-    id: '34',
+    id: '4',
     name: 'Frankfurt',
     bookings: [
       {

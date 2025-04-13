@@ -61,24 +61,11 @@
     <div v-if="bookingStore.stationNames.length > 0" class="mb-4">
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-sm font-medium">Filter by station:</span>
-        <div class="join">
-          <button
-            class="join-item btn btn-sm"
-            :class="calendarStore.selectedStation === null ? 'btn-primary' : 'btn-outline'"
-            @click="calendarStore.setSelectedStation(null)"
-          >
-            All
-          </button>
-          <button
-            v-for="station in bookingStore.stationNames"
-            :key="station.id"
-            class="join-item btn btn-sm"
-            :class="calendarStore.selectedStation === station.id ? 'btn-primary' : 'btn-outline'"
-            @click="calendarStore.setSelectedStation(station.id)"
-          >
-            {{ station.name }}
-          </button>
-        </div>
+        <Autocomplete
+          placeholder="Search stations..."
+          :search-fn="searchStation"
+          @select="onStationSelect"
+        />
       </div>
     </div>
 
@@ -94,12 +81,15 @@
 import { defineEmits, ref, onMounted, onUnmounted } from 'vue'
 import { useBookingStore } from '../stores/bookingStore'
 import { useCalendarStore } from '../stores/calendarStore'
+import { searchStation } from '@/api/common'
+import type { Station } from '@/types'
 
 // Import Vue Datepicker
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import DayTile from './DayTile.vue'
+import Autocomplete from './AutocompleteSearch.vue'
 
 const emit = defineEmits<{
   (e: 'booking-click', bookingId: string): void
@@ -133,4 +123,8 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', clickOutside)
 })
+
+const onStationSelect = (station: Station) => {
+  calendarStore.setSelectedStation(station.id)
+}
 </script>
