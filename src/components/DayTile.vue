@@ -1,5 +1,5 @@
 <template>
-  <div class="day-tile h-40 border rounded-md bg-white overflow-hidden flex flex-col">
+  <div class="day-tile h-60 border rounded-md bg-white overflow-hidden flex flex-col">
     <div
       class="day-header p-2 text-center"
       :class="{ 'bg-primary text-primary-content': isToday, 'bg-gray-100': !isToday }"

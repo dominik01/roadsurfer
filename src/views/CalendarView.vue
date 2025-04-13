@@ -1,6 +1,6 @@
 <template>
   <div class="calendar-view">
-    <h1 class="text-2xl font-bold mb-4">Calendar View</h1>
+    <h1 class="text-2xl font-bold mb-4">Booking dashboard</h1>
     <div v-if="bookingStore.isLoading" class="flex justify-center my-8">
       <span class="loading loading-spinner loading-lg text-primary"></span>
     </div>
