@@ -1,14 +1,15 @@
+import type { Booking, Station } from '@/types'
+
 const BASE_URL = 'https://605c94c36d85de00170da8b4.mockapi.io/'
 
-export const getStations = async () => {
-  const response = await fetch(`${BASE_URL}/stations`)
+export const searchStation = async (query: string): Promise<Station[]> => {
+  const response = await fetch(`${BASE_URL}/stations?name=${query}`)
 
   return await checkForErrors(response)
 }
 
-export const searchStation = async (text: string): Promise<Station[]> => {
-  const response = await fetch(`${BASE_URL}/stations?name=${text}`)
-
+export const getBooking = async (stationId: string, bookingId: string): Promise<Booking> => {
+  const response = await fetch(`${BASE_URL}/stations/${stationId}/bookings/${bookingId}`)
   return await checkForErrors(response)
 }
 

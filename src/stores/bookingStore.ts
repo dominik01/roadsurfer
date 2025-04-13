@@ -1,37 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Booking, Station } from '../types'
+import { getBooking } from '@/api/common'
+import type { Booking } from '../types'
 
 export const useBookingStore = defineStore('booking', () => {
-  const stations = ref<Station[]>([])
   const currentBooking = ref<Booking | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  const fetchBookingById = async (id: string) => {
+  const fetchBookingById = async (stationId: string, bookingId: string) => {
     isLoading.value = true
     error.value = null
     currentBooking.value = null
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      // Find booking in any station
-      for (const station of stations.value) {
-        const booking = station.bookings.find((b) => b.id === id)
-        if (booking) {
-          currentBooking.value = {
-            ...booking,
-            stationName: station.name, // Add station name for convenience
-            stationId: station.id,
-          }
-          break
-        }
-      }
+      const data = await getBooking(stationId, bookingId)
+      currentBooking.value = data
 
       if (!currentBooking.value) {
-        error.value = `Booking with id ${id} not found`
+        error.value = `Booking with id ${bookingId} not found`
       }
     } catch (err) {
       error.value = 'Failed to fetch booking details'

@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     component: CalendarView,
   },
   {
-    path: '/booking/:id',
+    path: '/station/:stationId/booking/:bookingId',
     name: 'booking-detail',
     component: BookingDetailView,
     props: true,

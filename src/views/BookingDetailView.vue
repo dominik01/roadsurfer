@@ -110,7 +110,8 @@ const goBack = () => {
 }
 
 onMounted(async () => {
-  const id = route.params.id as string
-  await bookingStore.fetchBookingById(id)
+  const stationId = route.params.stationId as string
+  const bookingId = route.params.bookingId as string
+  await bookingStore.fetchBookingById(stationId, bookingId)
 })
 </script>

@@ -29,12 +29,17 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
+import { useCalendarStore } from '@/stores/calendarStore'
 import CalendarWeekView from '../components/CalendarWeekView.vue'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
+const calendarStore = useCalendarStore()
 
 const navigateToBooking = (bookingId: string) => {
-  router.push({ name: 'booking-detail', params: { id: bookingId } })
+  router.push({
+    name: 'booking-detail',
+    params: { bookingId: bookingId, stationId: calendarStore.selectedStation?.id },
+  })
 }
 </script>
