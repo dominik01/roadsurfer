@@ -58,9 +58,9 @@
       </button>
     </div>
 
-    <div v-if="bookingStore.stationNames.length > 0" class="mb-4">
+    <div class="mb-4">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-sm font-medium">Filter by station:</span>
+        <span class="text-sm font-medium">Select your station:</span>
         <Autocomplete
           placeholder="Search stations..."
           :search-fn="searchStation"
@@ -79,7 +79,6 @@
 
 <script setup lang="ts">
 import { defineEmits, ref, onMounted, onUnmounted } from 'vue'
-import { useBookingStore } from '../stores/bookingStore'
 import { useCalendarStore } from '../stores/calendarStore'
 import { searchStation } from '@/api/common'
 import type { Station } from '@/types'
@@ -95,7 +94,6 @@ const emit = defineEmits<{
   (e: 'booking-click', bookingId: string): void
 }>()
 
-const bookingStore = useBookingStore()
 const calendarStore = useCalendarStore()
 
 const isDatePickerOpen = ref(false)
@@ -125,6 +123,6 @@ onUnmounted(() => {
 })
 
 const onStationSelect = (station: Station) => {
-  calendarStore.setSelectedStation(station.id)
+  calendarStore.setSelectedStation(station)
 }
 </script>

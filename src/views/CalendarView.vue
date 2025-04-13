@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
 import CalendarWeekView from '../components/CalendarWeekView.vue'
@@ -38,8 +37,4 @@ const bookingStore = useBookingStore()
 const navigateToBooking = (bookingId: string) => {
   router.push({ name: 'booking-detail', params: { id: bookingId } })
 }
-
-onMounted(async () => {
-  await bookingStore.fetchStations()
-})
 </script>

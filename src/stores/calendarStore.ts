@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { format, startOfWeek, addDays, subDays } from 'date-fns'
+import type { Station } from '@/types'
 
 export const useCalendarStore = defineStore('calendar', () => {
   const currentDate = ref(new Date())
-  const selectedStation = ref<string | null>(null)
+  const selectedStation = ref<Station | null>(null)
 
   const weekDates = computed(() => {
     const monday = startOfWeek(currentDate.value, { weekStartsOn: 1 })
@@ -46,8 +47,8 @@ export const useCalendarStore = defineStore('calendar', () => {
     currentDate.value = addDays(currentDate.value, 7)
   }
 
-  function setSelectedStation(stationId: string | null) {
-    selectedStation.value = stationId
+  function setSelectedStation(station: Station) {
+    selectedStation.value = station
   }
 
   return {
