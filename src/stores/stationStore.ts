@@ -29,8 +29,10 @@ export const useStationStore = defineStore('station', () => {
   }
 
   return {
+    error,
     stations,
     fetchStations,
     selectedStation,
+    isLoading,
   }
 })

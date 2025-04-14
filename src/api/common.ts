@@ -26,7 +26,7 @@ export const getBooking = async (stationId: string, bookingId: string): Promise<
   return await checkForErrors(response)
 }
 
-const checkForErrors = async (response) => {
+const checkForErrors = async (response: any) => {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }

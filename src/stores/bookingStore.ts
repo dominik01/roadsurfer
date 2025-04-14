@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { getBooking } from '@/api/common'
 import type { Booking } from '../types'
 
+vi.spyOn(console, 'error').mockImplementation(() => {})
+
 export const useBookingStore = defineStore('booking', () => {
   const currentBooking = ref<Booking | null>(null)
   const isLoading = ref(false)

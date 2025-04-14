@@ -14,7 +14,7 @@ export default mergeConfig(
         inline: ['@vue', '@vueuse', 'pinia'],
       },
       coverage: {
-        provider: 'istanbul', // Changed from 'c8' to 'istanbul'
+        provider: 'istanbul',
         reporter: ['text', 'html'],
         exclude: ['node_modules/'],
       },
