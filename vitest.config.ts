@@ -9,6 +9,15 @@ export default mergeConfig(
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
+      globals: true,
+      deps: {
+        inline: ['@vue', '@vueuse', 'pinia'],
+      },
+      coverage: {
+        provider: 'istanbul', // Changed from 'c8' to 'istanbul'
+        reporter: ['text', 'html'],
+        exclude: ['node_modules/'],
+      },
     },
   }),
 )
