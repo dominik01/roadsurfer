@@ -1,4 +1,3 @@
-// components/CalendarWeekView.vue
 <template>
   <div class="calendar-week-view mb-4">
     <div class="flex justify-between items-center mb-4 bg-white py-4 shadow rounded-md">
@@ -60,7 +59,6 @@
 
     <div class="mb-4">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-sm font-medium">Select your station:</span>
         <Autocomplete
           placeholder="Search stations..."
           :search-fn="searchStation"

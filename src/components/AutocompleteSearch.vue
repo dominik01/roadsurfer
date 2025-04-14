@@ -5,7 +5,7 @@
       v-model="query"
       @input="onInput"
       :placeholder="placeholder"
-      class="input input-bordered w-full pr-10"
+      class="input w-full pr-10 bg-white"
     />
 
     <!-- Spinner -->
@@ -74,15 +74,10 @@ const fetchSuggestions = _.debounce(async (text: string) => {
   showSuggestions.value = false
 
   if (!text) return
-
   isLoading.value = true
 
   try {
     const results = await props.searchFn(text)
-
-    if (!Array.isArray(results)) {
-      throw new Error('Invalid response format')
-    }
 
     suggestions.value = results
     noResults.value = results.length === 0
@@ -106,6 +101,7 @@ const select = (item: any) => {
   query.value = props.format(item)
   suggestions.value = []
   showSuggestions.value = false
+  query.value = ''
 }
 
 const formatItem = (item: any): string => {
