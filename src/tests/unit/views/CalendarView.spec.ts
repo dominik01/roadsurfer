@@ -4,7 +4,7 @@ import { createTestingPinia } from '@pinia/testing'
 import CalendarView from '@/views/CalendarView.vue'
 import CalendarWeekView from '@/components/CalendarWeekView.vue'
 import { useBookingStore } from '@/stores/bookingStore'
-import { useCalendarStore } from '@/stores/calendarStore'
+import { useCalendarStore } from '@/stores/stationStore'
 
 // Mock router
 vi.mock('vue-router', () => ({

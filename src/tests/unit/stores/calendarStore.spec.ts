@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useCalendarStore } from '@/stores/calendarStore'
+import { useCalendarStore } from '@/stores/stationStore'
 import { addDays, subDays, startOfWeek, format } from 'date-fns'
 
 describe('calendarStore', () => {

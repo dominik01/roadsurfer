@@ -1,6 +1,18 @@
 import type { Booking, Station } from '@/types'
 
-const BASE_URL = 'https://605c94c36d85de00170da8b4.mockapi.io/'
+const BASE_URL = 'https://605c94c36d85de00170da8b4.mockapi.io'
+
+export const getAllStations = async (): Promise<Station[]> => {
+  const response = await fetch(`${BASE_URL}/stations`)
+
+  return await checkForErrors(response)
+}
+
+export const getStation = async (stationId: string): Promise<Station> => {
+  const response = await fetch(`${BASE_URL}/stations/${stationId}`)
+
+  return await checkForErrors(response)
+}
 
 export const searchStation = async (query: string): Promise<Station[]> => {
   const response = await fetch(`${BASE_URL}/stations?name=${query}`)
@@ -10,6 +22,7 @@ export const searchStation = async (query: string): Promise<Station[]> => {
 
 export const getBooking = async (stationId: string, bookingId: string): Promise<Booking> => {
   const response = await fetch(`${BASE_URL}/stations/${stationId}/bookings/${bookingId}`)
+
   return await checkForErrors(response)
 }
 

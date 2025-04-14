@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from 'vue'
-import { useCalendarStore } from '../stores/calendarStore'
+import { useStationStore } from '../stores/stationStore'
 import { format, parseISO, isSameDay } from 'date-fns'
 import BookingItem from './BookingItem.vue'
 
@@ -38,7 +38,7 @@ const emit = defineEmits<{
   (e: 'booking-click', bookingId: string): void
 }>()
 
-const calendarStore = useCalendarStore()
+const stationStore = useStationStore()
 
 const dayName = computed(() => format(props.date, 'EEE'))
 const dayNumber = computed(() => format(props.date, 'd'))
@@ -49,10 +49,10 @@ const isToday = computed(() => {
 })
 
 const bookingsForDay = computed(() => {
-  if (!calendarStore.selectedStation?.bookings) {
+  if (!stationStore.selectedStation?.bookings) {
     return []
   }
-  return calendarStore.selectedStation?.bookings
+  return stationStore.selectedStation?.bookings
     .filter((booking) => {
       const startDate = parseISO(booking.startDate)
       const endDate = parseISO(booking.endDate)

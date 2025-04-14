@@ -16,7 +16,7 @@
           />
         </svg>
 
-        <span class="text-xl">{{ calendarStore.selectedStation?.name || 'No station' }}</span>
+        <span class="text-xl">{{ stationStore.selectedStation?.name || 'No station' }}</span>
       </div>
     </div>
 
@@ -48,17 +48,22 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
-import { useCalendarStore } from '@/stores/calendarStore'
+import { useStationStore } from '@/stores/stationStore'
+import { onMounted } from 'vue'
 import CalendarWeekView from '../components/CalendarWeekView.vue'
 
 const router = useRouter()
 const bookingStore = useBookingStore()
-const calendarStore = useCalendarStore()
+const stationStore = useStationStore()
 
 const navigateToBooking = (bookingId: string) => {
   router.push({
     name: 'booking-detail',
-    params: { bookingId: bookingId, stationId: calendarStore.selectedStation?.id },
+    params: { bookingId: bookingId, stationId: stationStore.selectedStation?.id },
   })
 }
+
+onMounted(() => {
+  //calendarStore.fetchStations()
+})
 </script>

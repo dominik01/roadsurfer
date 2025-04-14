@@ -1,14 +1,14 @@
 <template>
   <div class="calendar-week-view mb-4">
     <div class="flex justify-between items-center mb-4 bg-white py-4 shadow rounded-md">
-      <button class="btn btn-link ml-2" @click="calendarStore.prevWeek">
+      <button class="btn btn-link ml-2" @click="prevWeek">
         <span class="hidden md:inline">Previous Week</span>
         <span class="md:hidden">Prev</span>
       </button>
 
       <div class="flex items-center gap-2">
         <h2 class="text-lg md:text-xl font-bold">
-          {{ calendarStore.formattedWeekRange }}
+          {{ formattedWeekRange }}
         </h2>
 
         <div class="relative">
@@ -39,7 +39,7 @@
             ref="datePickerRef"
           >
             <VueDatePicker
-              v-model="calendarStore.currentDate"
+              v-model="currentDate"
               @update:model-value="isDatePickerOpen = false"
               :enable-time-picker="false"
               auto-apply
@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <button class="btn btn-link mr-2" @click="calendarStore.nextWeek">
+      <button class="btn btn-link mr-2" @click="nextWeek">
         <span class="hidden md:inline">Next Week</span>
         <span class="md:hidden">Next</span>
       </button>
@@ -68,7 +68,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-7 gap-2">
-      <div v-for="date in calendarStore.weekDates" :key="date.toISOString()" class="md:col-span-1">
+      <div v-for="date in weekDates" :key="date.toISOString()" class="md:col-span-1">
         <DayTile :date="date" @booking-click="onBookingClick" />
       </div>
     </div>
@@ -76,9 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, ref, onMounted, onUnmounted } from 'vue'
-import { useCalendarStore } from '../stores/calendarStore'
+import { defineEmits, ref, onMounted, onUnmounted, computed } from 'vue'
+import { useStationStore } from '../stores/stationStore'
 import { searchStation } from '@/api/common'
+import { format, startOfWeek, addDays, subDays } from 'date-fns'
 import type { Station } from '@/types'
 
 // Import Vue Datepicker
@@ -92,8 +93,7 @@ const emit = defineEmits<{
   (e: 'booking-click', bookingId: string): void
 }>()
 
-const calendarStore = useCalendarStore()
-
+const stationStore = useStationStore()
 const isDatePickerOpen = ref(false)
 const datePickerRef = ref<HTMLElement | null>(null)
 
@@ -112,6 +112,48 @@ const clickOutside = (event: MouseEvent) => {
   }
 }
 
+const currentDate = ref(new Date())
+
+const weekDates = computed(() => {
+  const monday = startOfWeek(currentDate.value, { weekStartsOn: 1 })
+
+  const dates: Date[] = []
+  for (let i = 0; i < 7; i++) {
+    dates.push(addDays(monday, i))
+  }
+
+  return dates
+})
+
+const formattedWeekRange = computed(() => {
+  const dates = weekDates.value
+  const firstDay = dates[0]
+  const lastDay = dates[dates.length - 1]
+
+  // Using date-fns for consistent formatting
+  const firstMonth = format(firstDay, 'MMM')
+  const lastMonth = format(lastDay, 'MMM')
+
+  const firstDate = format(firstDay, 'd')
+  const lastDate = format(lastDay, 'd')
+
+  const year = format(firstDay, 'yyyy')
+
+  if (firstMonth === lastMonth) {
+    return `${firstMonth} ${firstDate} - ${lastDate}, ${year}`
+  } else {
+    return `${firstMonth} ${firstDate} - ${lastMonth} ${lastDate}, ${year}`
+  }
+})
+
+function prevWeek() {
+  currentDate.value = subDays(currentDate.value, 7)
+}
+
+function nextWeek() {
+  currentDate.value = addDays(currentDate.value, 7)
+}
+
 onMounted(() => {
   document.addEventListener('click', clickOutside)
 })
@@ -121,6 +163,6 @@ onUnmounted(() => {
 })
 
 const onStationSelect = (station: Station) => {
-  calendarStore.setSelectedStation(station)
+  stationStore.selectedStation = station
 }
 </script>

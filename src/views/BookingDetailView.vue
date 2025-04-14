@@ -52,7 +52,7 @@
 
             <div class="booking-info-item">
               <h3 class="text-sm font-semibold text-gray-500">Pickup-Return Station</h3>
-              <p class="text-lg">{{ bookingStore.currentBooking.stationName }}</p>
+              <p class="text-lg">{{ stationName }}</p>
             </div>
           </div>
         </div>
@@ -82,14 +82,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useBookingStore } from '../stores/bookingStore'
 import { format, parseISO, differenceInDays } from 'date-fns'
-
+import { useStationStore } from '@/stores/stationStore'
+import { getStation } from '@/api/common'
 const router = useRouter()
 const route = useRoute()
 const bookingStore = useBookingStore()
+const stationStore = useStationStore()
 
 const formatDate = (dateString: string) => {
   return format(parseISO(dateString), 'MMM d, yyyy h:mm a')
@@ -109,9 +111,20 @@ const goBack = () => {
   router.push({ name: 'calendar' })
 }
 
+const stationName = ref('Unknown station')
+
 onMounted(async () => {
   const stationId = route.params.stationId as string
   const bookingId = route.params.bookingId as string
+
   await bookingStore.fetchBookingById(stationId, bookingId)
+  const returnStationId = bookingStore?.currentBooking?.pickupReturnStationId
+
+  if (returnStationId && stationStore.selectedStation?.id !== returnStationId) {
+    const result = await getStation(returnStationId)
+    stationName.value = result.name
+  } else {
+    stationName.value = stationStore.selectedStation?.name
+  }
 })
 </script>

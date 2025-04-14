@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import CalendarWeekView from '@/components/CalendarWeekView.vue'
 import DayTile from '@/components/DayTile.vue'
-import { useCalendarStore } from '@/stores/calendarStore'
+import { useCalendarStore } from '@/stores/stationStore'
 import { searchStation } from '@/api/common'
 
 // Mock the API module
