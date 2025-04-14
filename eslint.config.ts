@@ -16,9 +16,6 @@ export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
     files: ['**/*.{ts,mts,tsx,vue}'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
   },
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
@@ -36,4 +33,11 @@ export default defineConfigWithVueTs(
     files: ['cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}', 'cypress/support/**/*.{js,ts,jsx,tsx}'],
   },
   skipFormatting,
+  {
+    name: 'override-no-any',
+    files: ['**/*.{ts,tsx,vue}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 )
