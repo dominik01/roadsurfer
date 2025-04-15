@@ -1,6 +1,6 @@
 // src/api/__tests__/common.spec.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getAllStations, getStation, searchStation, getBooking } from '../common'
+import { getAllStations, getStation, searchStation, getBooking, checkForErrors } from '../common'
 import type { Station, Booking } from '@/types'
 
 // Mock data for tests
@@ -41,12 +41,124 @@ describe('API Common', () => {
     mockFetch.mockClear()
   })
 
+  describe('checkForErrors', () => {
+    it('should parse JSON response correctly', async () => {
+      // Arrange
+      const mockResponse = {
+        ok: true,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(JSON.stringify(mockStation)),
+      }
+
+      // Act
+      const result = await checkForErrors(mockResponse)
+
+      // Assert
+      expect(result).toEqual(mockStation)
+    })
+
+    it('should handle HTTP errors with additional error details', async () => {
+      // Arrange
+      const errorData = { error: 'Not found', message: 'Station does not exist' }
+      const mockResponse = {
+        ok: false,
+        status: 404,
+        json: vi.fn().mockResolvedValue(errorData),
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+      }
+
+      // Act & Assert
+      try {
+        await checkForErrors(mockResponse)
+        // Should not reach here
+        expect(true).toBe(false)
+      } catch (err) {
+        const error = err as Error & { status?: number; data?: any }
+        expect(error.message).toContain('HTTP error! status: 404')
+        expect(error.message).toContain('Station does not exist')
+        expect(error.status).toBe(404)
+        expect(error.data).toEqual(errorData)
+      }
+    })
+
+    it('should handle basic HTTP errors when no additional details available', async () => {
+      // Arrange
+      const mockResponse = {
+        ok: false,
+        status: 500,
+        json: vi.fn().mockRejectedValue(new Error('Invalid JSON')),
+        headers: {
+          get: vi.fn().mockReturnValue('text/html'),
+        },
+      }
+
+      // Act & Assert
+      try {
+        await checkForErrors(mockResponse)
+        // Should not reach here
+        expect(true).toBe(false)
+      } catch (err) {
+        const error = err as Error & { status?: number }
+        expect(error.message).toBe('HTTP error! status: 500')
+        expect(error.status).toBe(500)
+      }
+    })
+
+    it('should reject non-JSON content types', async () => {
+      // Arrange
+      const mockResponse = {
+        ok: true,
+        headers: {
+          get: vi.fn().mockReturnValue('text/html'),
+        },
+      }
+
+      // Act & Assert
+      await expect(checkForErrors(mockResponse)).rejects.toThrow('Response is not JSON')
+    })
+
+    it('should handle empty responses', async () => {
+      // Arrange
+      const mockResponse = {
+        ok: true,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(''),
+      }
+
+      // Act & Assert
+      await expect(checkForErrors(mockResponse)).rejects.toThrow('Empty response received')
+    })
+
+    it('should handle invalid JSON responses', async () => {
+      // Arrange
+      const mockResponse = {
+        ok: true,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue('{"invalid json":'),
+      }
+
+      // Act & Assert
+      await expect(checkForErrors(mockResponse)).rejects.toThrow('Invalid JSON response')
+    })
+  })
+
   describe('getAllStations', () => {
     it('should fetch all stations successfully', async () => {
       // Arrange
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStations,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(JSON.stringify(mockStations)),
       })
 
       // Act
@@ -62,10 +174,19 @@ describe('API Common', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
+        json: vi.fn().mockRejectedValue(new Error('Invalid JSON')),
       })
 
       // Act & Assert
-      await expect(getAllStations()).rejects.toThrow('HTTP error! status: 500')
+      try {
+        await getAllStations()
+        // Should not reach here
+        expect(true).toBe(false)
+      } catch (err) {
+        const error = err as Error & { status?: number }
+        expect(error.message).toBe('HTTP error! status: 500')
+        expect(error.status).toBe(500)
+      }
     })
   })
 
@@ -74,7 +195,10 @@ describe('API Common', () => {
       // Arrange
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStation,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(JSON.stringify(mockStation)),
       })
 
       // Act
@@ -93,7 +217,10 @@ describe('API Common', () => {
       // Arrange
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => [mockStation],
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(JSON.stringify([mockStation])),
       })
 
       // Act
@@ -110,8 +237,12 @@ describe('API Common', () => {
     it('should return empty array when no matches are found', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => [],
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue('[]'),
       })
+
       const result = await searchStation('NonExistent')
       expect(result).toEqual([])
     })
@@ -122,7 +253,10 @@ describe('API Common', () => {
       // Arrange
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockBooking,
+        headers: {
+          get: vi.fn().mockReturnValue('application/json'),
+        },
+        text: vi.fn().mockResolvedValue(JSON.stringify(mockBooking)),
       })
 
       // Act

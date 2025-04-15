@@ -26,44 +26,44 @@ export const getBooking = async (stationId: string, bookingId: string): Promise<
   return await checkForErrors(response)
 }
 
-const checkForErrors = async (response) => {
+export const checkForErrors = async (response: Response): Promise<any> => {
   // Handle HTTP errors
   if (!response.ok) {
     let errorMessage = `HTTP error! status: ${response.status}`
+    let errorData
 
-    // Try to add more context from the response if possible
     try {
-      const errorBody = await response.text()
-      const errorJson = JSON.parse(errorBody)
-      if (errorJson.message || errorJson.error) {
-        errorMessage += `: ${errorJson.message || errorJson.error}`
+      // Attempt to extract additional error context
+      errorData = await response.json()
+      if (errorData.message || errorData.error) {
+        errorMessage += `: ${errorData.message || errorData.error}`
       }
     } catch {
-      // Ignore parsing errors - we'll use the basic error message
+      // JSON parsing failed, continue with basic error
     }
 
-    const error = new Error(errorMessage)
+    const error = new Error(errorMessage) as Error & { status: number; data?: any }
     error.status = response.status
+    error.data = errorData
     throw error
   }
 
-  // Check content type
+  // Validate JSON content type
   const contentType = response.headers.get('content-type')
   if (contentType && !contentType.includes('application/json')) {
     throw new Error('Response is not JSON')
   }
 
-  // Parse JSON response
+  // Handle response content
   const text = await response.text()
-
-  // Handle empty responses
   if (!text) {
     throw new Error('Empty response received')
   }
 
+  // Parse and return the JSON
   try {
     return JSON.parse(text)
   } catch (error) {
-    throw new Error(`Failed to parse JSON response: ${error.message}`)
+    throw new Error(`Invalid JSON response: ${(error as Error).message}`)
   }
 }
