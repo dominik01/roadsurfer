@@ -4,9 +4,8 @@ import { mount, flushPromises } from '@vue/test-utils'
 import AutocompleteSearch from '../AutocompleteSearch.vue'
 
 // Mock the debounce function to execute immediately
-vi.mock('lodash', () => ({
-  default: { debounce: (fn) => fn },
-  debounce: (fn) => fn,
+vi.mock('lodash/debounce', () => ({
+  default: (fn) => fn,
 }))
 
 describe('AutocompleteSearch', () => {

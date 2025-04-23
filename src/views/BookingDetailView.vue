@@ -350,7 +350,7 @@ onMounted(async () => {
   await bookingStore.fetchBookingById(stationId, bookingId)
   const returnStationId = bookingStore?.currentBooking?.pickupReturnStationId
 
-  if (returnStationId && stationStore.selectedStation?.id !== returnStationId) {
+  if ((returnStationId && stationId !== returnStationId) || !stationStore.selectedStation) {
     const result = await getStation(returnStationId)
     stationName.value = result.name
   } else {

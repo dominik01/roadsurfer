@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import _ from 'lodash'
+import debounce from 'lodash/debounce'
 
 interface Props<T> {
   placeholder?: string
@@ -67,7 +67,7 @@ const isLoading = ref(false)
 const noResults = ref(false)
 const errorMessage = ref('')
 
-const fetchSuggestions = _.debounce(async (text: string) => {
+const fetchSuggestions = debounce(async (text: string) => {
   suggestions.value = []
   noResults.value = false
   errorMessage.value = ''
